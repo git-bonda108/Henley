@@ -1,0 +1,26 @@
+.DS_Store
+**/.DS_Store
+*.pyc
+__pycache__/
+
+# Reference app (separate nested repo — exclude from this push)
+RTWSA Doc Builder 1/
+
+# Secrets — never commit
+.env
+**/.env
+.streamlit/secrets.toml
+
+# Python
+.venv/
+**/.venv/
+*.egg-info/
+.pytest_cache/
+
+# Node (reference app)
+**/node_modules/
+**/.next/
+
+# Large local-only samples
+quote-comparison-agent/samples/*.pdf
+quote-comparison-agent/tmp/
