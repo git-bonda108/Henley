@@ -28,6 +28,6 @@ def detect_brand(text: str) -> str:
         return "Carlisle Homes"
     if "metricon" in lower:
         return "Metricon"
-    if "henley" in lower:
-        return "Henley Homes"
+    if "builder" in lower:
+        return "the builder"
     return "Unknown"

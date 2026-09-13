@@ -27,7 +27,7 @@ def fetch_url(url: str) -> dict[str, Any]:
         return _fetch_tavily(url, tavily_key)
 
     with httpx.Client(timeout=15.0, follow_redirects=True) as client:
-        resp = client.get(url, headers={"User-Agent": "HenleyQuoteAgent/1.0"})
+        resp = client.get(url, headers={"User-Agent": "BuilderQuoteAgent/1.0"})
         resp.raise_for_status()
         content_type = resp.headers.get("content-type", "")
         if "html" not in content_type.lower():

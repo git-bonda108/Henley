@@ -1,8 +1,8 @@
-"""Fusion5 brand tokens and CSS injection."""
+"""Quote Intelligence brand tokens and CSS injection."""
 
 from pathlib import Path
 
-CSS_PATH = Path(__file__).resolve().parent.parent / "theme" / "fusion5.css"
+CSS_PATH = Path(__file__).resolve().parent.parent / "theme" / "quote_intelligence.css"
 
 COLORS = {
     "grape": "#2A1A3D",
@@ -37,20 +37,20 @@ def hero_headline() -> None:
 
     st.markdown(
         """
-        <div class="f5-hero">
-            <div class="f5-hero-grid">
-                <div class="f5-hero-copy">
-                    <p class="f5-eyebrow">Fusion5 · Henley Homes</p>
-                    <h1 class="f5-display">
-                        go beyond <span class="f5-accent">the manual quote comparison.</span>
+        <div class="qi-hero">
+            <div class="qi-hero-grid">
+                <div class="qi-hero-copy">
+                    <p class="qi-eyebrow">Quote Intelligence</p>
+                    <h1 class="qi-display">
+                        go beyond <span class="qi-accent">the manual quote comparison.</span>
                     </h1>
-                    <p class="f5-lead">
-                        An AI agent that compares a competitor home-builder quote against Henley's
+                    <p class="qi-lead">
+                        An AI agent that compares a competitor home-builder quote against Builder's
                         equivalent — flags ambiguity, surfaces value, never fabricates a number.
                     </p>
                 </div>
-                <div class="f5-hero-mark" aria-hidden="true">
-                    <div class="f5-infinity-cycle"></div>
+                <div class="qi-hero-mark" aria-hidden="true">
+                    <div class="qi-infinity-cycle"></div>
                 </div>
             </div>
         </div>
@@ -64,10 +64,10 @@ def internal_banner(session_id: str, generated_at: str) -> None:
 
     st.markdown(
         f"""
-        <div class="f5-internal-banner">
+        <div class="qi-internal-banner">
             <strong>INTERNAL — Sales team review required</strong>
             · Generated {generated_at} · Session <code>{session_id}</code>
-            <br><span class="f5-internal-sub">
+            <br><span class="qi-internal-sub">
             This is not customer-facing content. Review before any customer communication.
             </span>
         </div>
@@ -82,7 +82,7 @@ def session_footer(session_id: str | None) -> None:
     sid = session_id or "—"
     st.markdown(
         f"""
-        <div class="f5-footer">
+        <div class="qi-footer">
             Session <code>{sid}</code> · Isolated comparison — no cross-session data (NFR-02)
         </div>
         """,
@@ -90,15 +90,15 @@ def session_footer(session_id: str | None) -> None:
     )
 
 
-def animated_vs_title(competitor: str, henley: str) -> None:
+def animated_vs_title(competitor: str, builder: str) -> None:
     import streamlit as st
 
     st.markdown(
         f"""
-        <div class="f5-vs-title">
-            <span class="f5-vs-left">{competitor}</span>
-            <span class="f5-vs-dot">vs</span>
-            <span class="f5-vs-right">{henley}</span>
+        <div class="qi-vs-title">
+            <span class="qi-vs-left">{competitor}</span>
+            <span class="qi-vs-dot">vs</span>
+            <span class="qi-vs-right">{builder}</span>
         </div>
         """,
         unsafe_allow_html=True,
@@ -106,7 +106,7 @@ def animated_vs_title(competitor: str, henley: str) -> None:
 
 
 def confidence_pill(level: str) -> str:
-    cls = {"HIGH": "f5-pill-high", "MEDIUM": "f5-pill-medium", "LOW": "f5-pill-low"}.get(
-        level.upper(), "f5-pill-medium"
+    cls = {"HIGH": "qi-pill-high", "MEDIUM": "qi-pill-medium", "LOW": "qi-pill-low"}.get(
+        level.upper(), "qi-pill-medium"
     )
-    return f'<span class="f5-pill {cls}">{level.upper()}</span>'
+    return f'<span class="qi-pill {cls}">{level.upper()}</span>'

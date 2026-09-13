@@ -39,7 +39,7 @@ st.progress((idx) / len(flags), text=f"Item {idx + 1} of {len(flags)}")
 
 st.markdown(
     f"""
-    <div class="f5-ambiguity-card">
+    <div class="qi-ambiguity-card">
         <div>{confidence_pill(flag.confidence)} <strong>{flag.item_name}</strong></div>
     </div>
     """,
@@ -53,9 +53,9 @@ with c1:
     st.markdown(f"Price: **${flag.competitor_value or 0:,.0f}** · Quantity: **NOT SPECIFIED**")
 with c2:
     st.markdown("**HENLEY**")
-    st.markdown(flag.henley_detail)
-    if flag.henley_value is not None:
-        st.markdown(f'Price: <span class="f5-mono">${flag.henley_value:,.0f}</span>', unsafe_allow_html=True)
+    st.markdown(flag.builder_detail)
+    if flag.builder_value is not None:
+        st.markdown(f'Price: <span class="qi-mono">${flag.builder_value:,.0f}</span>', unsafe_allow_html=True)
 
 st.markdown("**Why this matters**")
 st.write(flag.reason)

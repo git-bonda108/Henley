@@ -15,7 +15,7 @@ def to_markdown(summary: ComparisonSummary, session_id: str) -> str:
         f"Session: {session_id} · Generated: {h.run_date or datetime.now(timezone.utc).isoformat()}",
         "",
         "## 1. Header",
-        f"- Henley plan: {h.henley_plan}",
+        f"- Builder plan: {h.builder_plan}",
         f"- Competitor: {h.competitor_builder} — {h.competitor_plan}",
         f"- Region: {h.region} · Rep: {h.sales_rep}",
         "",
@@ -27,12 +27,12 @@ def to_markdown(summary: ComparisonSummary, session_id: str) -> str:
     for d in summary.design_differences:
         lines.append(f"- {d.get('point', d)}")
 
-    lines += ["", "## 4. Inclusion Differences", "| Category | Henley | Competitor |", "|---|---|---|"]
+    lines += ["", "## 4. Inclusion Differences", "| Category | Builder | Competitor |", "|---|---|---|"]
     for row in summary.inclusion_differences:
-        lines.append(f"| {row.category} | {row.henley} | {row.competitor} |")
+        lines.append(f"| {row.category} | {row.builder} | {row.competitor} |")
 
-    lines += ["", "## 5. Henley Value Advantage"]
-    for v in summary.henley_value_advantage:
+    lines += ["", "## 5. Builder Value Advantage"]
+    for v in summary.builder_value_advantage:
         val = f"${v.value:,.0f}" if v.value is not None else "TBC"
         lines.append(f"- {v.point} — {val} ({v.source_ref})")
 
@@ -61,16 +61,16 @@ def to_docx_bytes(summary: ComparisonSummary, session_id: str) -> bytes:
     table = doc.add_table(rows=1, cols=3)
     hdr = table.rows[0].cells
     hdr[0].text = "Category"
-    hdr[1].text = "Henley"
+    hdr[1].text = "Builder"
     hdr[2].text = "Competitor"
     for row in summary.inclusion_differences:
         cells = table.add_row().cells
         cells[0].text = row.category
-        cells[1].text = row.henley
+        cells[1].text = row.builder
         cells[2].text = row.competitor
 
-    doc.add_heading("Henley Value Advantage", level=1)
-    for v in summary.henley_value_advantage:
+    doc.add_heading("Builder Value Advantage", level=1)
+    for v in summary.builder_value_advantage:
         p = doc.add_paragraph(style="List Bullet")
         val = f"${v.value:,.0f}" if v.value is not None else "TBC"
         p.add_run(f"{v.point} — {val} ({v.source_ref})")
@@ -101,7 +101,7 @@ def to_pdf_bytes(summary: ComparisonSummary, session_id: str) -> bytes:
         text.textLine(line)
     c.drawText(text)
     c.setFont("Helvetica", 8)
-    c.drawString(2 * cm, 1.5 * cm, "Fusion5 for Henley Homes — INTERNAL watermark")
+    c.drawString(2 * cm, 1.5 * cm, "Quote Intelligence — INTERNAL watermark")
     c.showPage()
     c.save()
     return buf.getvalue()

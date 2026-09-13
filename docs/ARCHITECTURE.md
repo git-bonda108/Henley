@@ -32,7 +32,7 @@ quote-comparison-agent/
 │   │   └── models.py           # Pydantic contracts: ExtractResult, AmbiguityFlag,
 │   │                           #   AmbiguityResolution, ComparisonSummary (+ sub-models)
 │   └── export.py               # Markdown, DOCX (python-docx), PDF (reportlab)
-└── theme/fusion5.css           # Brand stylesheet (naming retained from the engagement)
+└── theme/quote_intelligence.css           # Brand stylesheet (naming retained from the engagement)
 ```
 
 ## Data flow, end to end

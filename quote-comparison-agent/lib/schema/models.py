@@ -18,19 +18,19 @@ class ExtractResult(BaseModel):
     competitor_plan: str = ""
     competitor_total: float | None = None
     competitor_items: list[LineItem] = Field(default_factory=list)
-    henley_plan: str = ""
-    henley_total: float | None = None
-    henley_items: list[LineItem] = Field(default_factory=list)
+    builder_plan: str = ""
+    builder_total: float | None = None
+    builder_items: list[LineItem] = Field(default_factory=list)
     competitor_design: dict = Field(default_factory=dict)
-    henley_design: dict = Field(default_factory=dict)
+    builder_design: dict = Field(default_factory=dict)
 
 
 class AmbiguityFlag(BaseModel):
     id: str
     item_name: str
     competitor_wording: str
-    henley_detail: str
-    henley_value: float | None = None
+    builder_detail: str
+    builder_value: float | None = None
     competitor_value: float | None = None
     reason: str
     suggested_clarification: str
@@ -46,9 +46,9 @@ class AmbiguityResolution(BaseModel):
 
 class InclusionRow(BaseModel):
     category: str
-    henley: str
+    builder: str
     competitor: str
-    advantage: Literal["henley", "competitor", "none"] = "none"
+    advantage: Literal["builder", "competitor", "none"] = "none"
 
 
 class ValuePoint(BaseModel):
@@ -60,25 +60,25 @@ class ValuePoint(BaseModel):
 class ReconciliationRow(BaseModel):
     description: str
     competitor_add: float | None = None
-    henley_add: float | None = None
+    builder_add: float | None = None
     source_ref: str = ""
 
 
 class QuoteReconciliation(BaseModel):
     rows: list[ReconciliationRow] = Field(default_factory=list)
     subtotal_competitor: float | None = None
-    subtotal_henley: float | None = None
+    subtotal_builder: float | None = None
     current_price_competitor: float | None = None
-    current_price_henley: float | None = None
+    current_price_builder: float | None = None
     reconciled_competitor: float | None = None
-    reconciled_henley: float | None = None
+    reconciled_builder: float | None = None
 
 
 class SummaryHeader(BaseModel):
-    henley_plan: str = ""
-    henley_contract_ref: str = ""
-    henley_range: str = ""
-    henley_facade: str = ""
+    builder_plan: str = ""
+    builder_contract_ref: str = ""
+    builder_range: str = ""
+    builder_facade: str = ""
     competitor_builder: str = ""
     competitor_plan: str = ""
     competitor_facade: str = ""
@@ -100,7 +100,7 @@ class ComparisonSummary(BaseModel):
     headline_snapshot: str = ""
     design_differences: list[dict] = Field(default_factory=list)
     inclusion_differences: list[InclusionRow] = Field(default_factory=list)
-    henley_value_advantage: list[ValuePoint] = Field(default_factory=list)
+    builder_value_advantage: list[ValuePoint] = Field(default_factory=list)
     competitor_advantage_gaps: list[ValuePoint] = Field(default_factory=list)
     quote_reconciliation: QuoteReconciliation = Field(default_factory=QuoteReconciliation)
     flagged_items: list[dict] = Field(default_factory=list)

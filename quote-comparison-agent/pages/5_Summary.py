@@ -13,7 +13,7 @@ def _render_header(s: ComparisonSummary) -> None:
         f"""
         | | |
         |---|---|
-        | Henley plan | **{h.henley_plan}** |
+        | Builder plan | **{h.builder_plan}** |
         | Competitor | **{h.competitor_builder} — {h.competitor_plan}** |
         | Region | {h.region} |
         | Sales rep | {h.sales_rep} |
@@ -34,20 +34,20 @@ def _render_inclusion_matrix(s: ComparisonSummary) -> None:
     import pandas as pd
 
     rows = [
-        {"Category": r.category, "Henley": r.henley, "Competitor": r.competitor, "Advantage": r.advantage}
+        {"Category": r.category, "Builder": r.builder, "Competitor": r.competitor, "Advantage": r.advantage}
         for r in s.inclusion_differences
     ]
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 
 def _render_value_list(items, kind: str) -> None:
-    border = "var(--f5-success)" if kind == "henley" else "var(--f5-warning)"
+    border = "var(--qi-success)" if kind == "builder" else "var(--qi-warning)"
     for v in items:
         val = f"${v.value:,.0f}" if v.value is not None else "Unconfirmed"
-        chip = f'<span class="f5-source-chip">{v.source_ref}</span>' if v.source_ref else ""
+        chip = f'<span class="qi-source-chip">{v.source_ref}</span>' if v.source_ref else ""
         st.markdown(
             f'<div style="border-left:3px solid {border};padding-left:0.75rem;margin-bottom:0.5rem;">'
-            f'{v.point} — <span class="f5-mono">{val}</span>{chip}</div>',
+            f'{v.point} — <span class="qi-mono">{val}</span>{chip}</div>',
             unsafe_allow_html=True,
         )
 
@@ -57,12 +57,12 @@ def _render_reconciliation(s: ComparisonSummary) -> None:
 
     q = s.quote_reconciliation
     rows = [
-        {"Description": r.description, "Competitor +": r.competitor_add, "Henley +": r.henley_add, "Ref": r.source_ref}
+        {"Description": r.description, "Competitor +": r.competitor_add, "Builder +": r.builder_add, "Ref": r.source_ref}
         for r in q.rows
     ]
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
     st.markdown(
-        f"**Current:** Competitor ${q.current_price_competitor or 0:,.0f} · Henley ${q.current_price_henley or 0:,.0f}"
+        f"**Current:** Competitor ${q.current_price_competitor or 0:,.0f} · Builder ${q.current_price_builder or 0:,.0f}"
     )
 
 
@@ -102,8 +102,8 @@ internal_banner(sid, summary.header.run_date)
 
 if summary.headline_advantage is not None:
     st.markdown(
-        f'<div class="f5-headline-number"><span>$</span>{summary.headline_advantage:,.0f}</div>'
-        '<p style="color:var(--f5-ink-muted);margin-top:0;">Confirmed Henley value advantage (where directly comparable)</p>',
+        f'<div class="qi-headline-number"><span>$</span>{summary.headline_advantage:,.0f}</div>'
+        '<p style="color:var(--qi-ink-muted);margin-top:0;">Confirmed Builder value advantage (where directly comparable)</p>',
         unsafe_allow_html=True,
     )
 
@@ -116,7 +116,7 @@ sections = [
     ("2", "Headline Snapshot", lambda: st.write(summary.headline_snapshot)),
     ("3", "Design Differences", lambda: _render_bullets(summary.design_differences)),
     ("4", "Inclusion Differences", lambda: _render_inclusion_matrix(summary)),
-    ("5", "Henley Value Advantage", lambda: _render_value_list(summary.henley_value_advantage, "henley")),
+    ("5", "Builder Value Advantage", lambda: _render_value_list(summary.builder_value_advantage, "builder")),
     ("6", "Competitor Advantage / Gaps", lambda: _render_value_list(summary.competitor_advantage_gaps, "gap")),
     ("7", "Quote Reconciliation", lambda: _render_reconciliation(summary)),
     ("8", "Flagged Items", lambda: _render_flags(summary)),

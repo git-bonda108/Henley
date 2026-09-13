@@ -63,4 +63,4 @@ All variables are read from `quote-comparison-agent/.env` (loaded by `config.py`
 
 ## Repository notes
 
-Code identifiers and UI strings retain the naming from the original engagement (the construction company, named competitor builders, and the delivery brand theme in `theme/fusion5.css`). Documentation refers to these parties generically; the code is untouched.
+Code identifiers and UI strings retain the naming from the original engagement (the construction company, named competitor builders, and the delivery brand theme in `theme/quote_intelligence.css`). Documentation refers to these parties generically; the code is untouched.

@@ -28,7 +28,7 @@ cards = [
 for col, (title, body) in zip([c1, c2, c3], cards):
     with col:
         st.markdown(
-            f'<div class="f5-principle-card"><h3>{title}</h3><p>{body}</p></div>',
+            f'<div class="qi-principle-card"><h3>{title}</h3><p>{body}</p></div>',
             unsafe_allow_html=True,
         )
 

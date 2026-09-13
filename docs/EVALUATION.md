@@ -4,7 +4,7 @@
 
 **None.** There are no test files, no test runner configuration, and no CI in this repository at HEAD (`.gitignore` anticipates a `.pytest_cache/`, but no suite was ever committed). Any statement about test counts or assertion coverage for this codebase would be unsupported. What the code *does* have is runtime verification:
 
-- **Schema validation as the output gate.** Every LLM response is validated with Pydantic before use: `ExtractResult.model_validate(raw)` (`lib/agent/pipeline.py:85`), `AmbiguityFlag.model_validate(item)` (`pipeline.py:103`), `ComparisonSummary.model_validate(raw)` (`pipeline.py:127`). Enum-typed fields (`confidence: Literal["LOW","MEDIUM"]`, `advantage: Literal["henley","competitor","none"]`, resolution `action`) reject out-of-vocabulary model output.
+- **Schema validation as the output gate.** Every LLM response is validated with Pydantic before use: `ExtractResult.model_validate(raw)` (`lib/agent/pipeline.py:85`), `AmbiguityFlag.model_validate(item)` (`pipeline.py:103`), `ComparisonSummary.model_validate(raw)` (`pipeline.py:127`). Enum-typed fields (`confidence: Literal["LOW","MEDIUM"]`, `advantage: Literal["builder","competitor","none"]`, resolution `action`) reject out-of-vocabulary model output.
 - **Prompt-level rules** (`lib/prompts/comparison_system.py`): never fabricate, emit "Unconfirmed — requires manual validation" for missing values, flag unquantified inclusions as LOW-confidence before comparing, use only the four supplied materials.
 - **A workflow-level gate**: when the ambiguity scan returns flags, the pipeline stops and the Review page requires a human resolution per flag before the summary step runs (sync path).
 

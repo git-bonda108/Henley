@@ -28,9 +28,9 @@ LogFn = Callable[[str], None]
 PIPELINE_STEPS = [
     "Ingesting documents",
     "Extracting line items (competitor)",
-    "Extracting line items (Henley)",
+    "Extracting line items (Builder)",
     "Fetching competitor home design",
-    "Fetching Henley home design",
+    "Fetching Builder home design",
     "Matching ranges and aligning items",
     "Scanning for ambiguity",
     "Ambiguity confirmation",
@@ -58,24 +58,24 @@ def ingest(wizard: dict, log_fn: LogFn | None = None) -> ExtractResult:
     provider = get_provider()
 
     if provider == "demo" or not wizard.get("competitor_pdf"):
-        _log(log_fn, "Demo mode — using representative Carlisle vs Henley fixture.", logs)
+        _log(log_fn, "Demo mode — using representative Carlisle vs Builder fixture.", logs)
         return demo_extract(wizard)
 
     comp_pdf = extract_pdf_text(wizard["competitor_pdf"])
-    hen_pdf = extract_pdf_text(wizard["henley_pdf"])
+    hen_pdf = extract_pdf_text(wizard["builder_pdf"])
     _log(log_fn, f"Read {comp_pdf['page_count']} pages from competitor PDF.", logs)
-    _log(log_fn, f"Read {hen_pdf['page_count']} pages from Henley PDF.", logs)
+    _log(log_fn, f"Read {hen_pdf['page_count']} pages from Builder PDF.", logs)
 
     comp_design = fetch_url(wizard["competitor_url"])
-    hen_design = fetch_url(wizard["henley_url"])
+    hen_design = fetch_url(wizard["builder_url"])
     _log(log_fn, f"Fetched competitor design: {comp_design.get('title', wizard['competitor_url'])}", logs)
-    _log(log_fn, f"Fetched Henley design: {hen_design.get('title', wizard['henley_url'])}", logs)
+    _log(log_fn, f"Fetched Builder design: {hen_design.get('title', wizard['builder_url'])}", logs)
 
     payload = {
         "competitor_quote": comp_pdf["text"][:40_000],
-        "henley_quote": hen_pdf["text"][:40_000],
+        "builder_quote": hen_pdf["text"][:40_000],
         "competitor_design": comp_design.get("text", "")[:15_000],
-        "henley_design": hen_design.get("text", "")[:15_000],
+        "builder_design": hen_design.get("text", "")[:15_000],
         "competitor_brand": wizard.get("competitor_brand"),
         "region": wizard.get("region"),
     }
@@ -168,7 +168,7 @@ async def run_openai_agents_pipeline(wizard: dict) -> PipelineResult:
     manager = Agent(
         name="Quote Comparison Manager",
         instructions=(
-            "Orchestrate Henley quote comparison. Call extract first, then scan, then summarize. "
+            "Orchestrate Builder quote comparison. Call extract first, then scan, then summarize. "
             "Never fabricate numbers. Return structured JSON from tools only."
         ),
         tools=[
@@ -200,7 +200,7 @@ def run_pipeline_sync(wizard: dict, log_fn: LogFn | None = None) -> PipelineResu
     _l("Starting document ingestion…")
     extract = ingest(wizard, _l)
     _l(f"Competitor: {extract.competitor_plan} — ${extract.competitor_total or 'TBC'}")
-    _l(f"Henley: {extract.henley_plan} — ${extract.henley_total or 'TBC'}")
+    _l(f"Builder: {extract.builder_plan} — ${extract.builder_total or 'TBC'}")
     _l("Scanning for ambiguous inclusions…")
     ambiguities = scan_ambiguities(extract, _l)
     if ambiguities:

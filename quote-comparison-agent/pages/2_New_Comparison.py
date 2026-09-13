@@ -17,7 +17,7 @@ st.caption("Upload both quotes, provide design URLs, and set run context. All fo
 # ── Section 1: Competitor quote ──────────────────────────────────────────────
 with st.expander("1 · Competitor quote", expanded=True):
     status = "READY" if w.get("competitor_pdf") else "PENDING"
-    st.markdown(f'<span class="f5-status-pill f5-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
+    st.markdown(f'<span class="qi-status-pill qi-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
 
     comp_file = st.file_uploader("Competitor quote PDF (≤25 MB)", type=["pdf"], key="comp_pdf")
     if comp_file:
@@ -33,23 +33,23 @@ with st.expander("1 · Competitor quote", expanded=True):
     if w["competitor_brand"] == "Other":
         w["competitor_brand_other"] = st.text_input("Builder name", w.get("competitor_brand_other", ""))
 
-# ── Section 2: Henley quote ──────────────────────────────────────────────────
-with st.expander("2 · Henley quote", expanded=bool(w.get("competitor_pdf"))):
-    status = "READY" if w.get("henley_pdf") else "PENDING"
-    st.markdown(f'<span class="f5-status-pill f5-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
+# ── Section 2: Builder quote ──────────────────────────────────────────────────
+with st.expander("2 · Builder quote", expanded=bool(w.get("competitor_pdf"))):
+    status = "READY" if w.get("builder_pdf") else "PENDING"
+    st.markdown(f'<span class="qi-status-pill qi-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
 
-    hen_file = st.file_uploader("Henley quote PDF", type=["pdf"], key="hen_pdf")
+    hen_file = st.file_uploader("Builder quote PDF", type=["pdf"], key="hen_pdf")
     if hen_file:
-        w["henley_pdf"] = hen_file.getvalue()
-        w["henley_pdf_name"] = hen_file.name
-        meta = extract_pdf_text(w["henley_pdf"])
+        w["builder_pdf"] = hen_file.getvalue()
+        w["builder_pdf_name"] = hen_file.name
+        meta = extract_pdf_text(w["builder_pdf"])
         st.success(f"**{hen_file.name}** · {meta['page_count']} pages")
 
 # ── Section 3: Home design URLs ────────────────────────────────────────────────
-with st.expander("3 · Home design URLs", expanded=bool(w.get("henley_pdf"))):
-    urls_ok = bool(w.get("competitor_url", "").startswith("http")) and bool(w.get("henley_url", "").startswith("http"))
+with st.expander("3 · Home design URLs", expanded=bool(w.get("builder_pdf"))):
+    urls_ok = bool(w.get("competitor_url", "").startswith("http")) and bool(w.get("builder_url", "").startswith("http"))
     status = "READY" if urls_ok else "PENDING"
-    st.markdown(f'<span class="f5-status-pill f5-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
+    st.markdown(f'<span class="qi-status-pill qi-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
     with c1:
@@ -58,9 +58,9 @@ with st.expander("3 · Home design URLs", expanded=bool(w.get("henley_pdf"))):
             w.get("competitor_url") or "https://www.carlislehomes.com.au/home-designs/",
         )
     with c2:
-        w["henley_url"] = st.text_input(
-            "Henley home design URL",
-            w.get("henley_url") or "https://www.henley.com.au/home-designs/",
+        w["builder_url"] = st.text_input(
+            "Builder home design URL",
+            w.get("builder_url") or "https://www.builder.com.au/home-designs/",
         )
     st.caption("We re-fetch live on every run — no caching (FR-02.3).")
 
@@ -68,7 +68,7 @@ with st.expander("3 · Home design URLs", expanded=bool(w.get("henley_pdf"))):
 with st.expander("4 · Run context", expanded=urls_ok):
     ctx_ok = bool(w.get("sales_rep", "").strip())
     status = "READY" if ctx_ok else "PENDING"
-    st.markdown(f'<span class="f5-status-pill f5-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
+    st.markdown(f'<span class="qi-status-pill qi-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
 
     w["region"] = st.radio("Region", ["VIC", "QLD", "NSW", "Other"], horizontal=True,
                              index=["VIC", "QLD", "NSW", "Other"].index(w.get("region", "VIC")))
@@ -84,10 +84,10 @@ st.session_state.wizard = w
 
 all_ready = all([
     w.get("competitor_url", "").startswith("http"),
-    w.get("henley_url", "").startswith("http"),
+    w.get("builder_url", "").startswith("http"),
     w.get("sales_rep", "").strip(),
 ]) and (
-    (w.get("competitor_pdf") and w.get("henley_pdf"))
+    (w.get("competitor_pdf") and w.get("builder_pdf"))
     or get_provider() == "demo"
 )
 

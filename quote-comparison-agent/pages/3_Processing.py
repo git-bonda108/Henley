@@ -17,7 +17,7 @@ if w.get("competitor_brand") == "Other" and w.get("competitor_brand_other"):
     competitor = w["competitor_brand_other"]
 
 st.title("Agent Processing")
-animated_vs_title(competitor, "Henley Allegra 355-D38")
+animated_vs_title(competitor, "Builder Allegra 355-D38")
 
 if not w.get("competitor_pdf") and not get_provider() == "demo":
     st.warning("No inputs found. Start from **New Comparison**.")
@@ -60,15 +60,15 @@ with col_l:
 
     for i, label in enumerate(PIPELINE_STEPS):
         if i < step_idx:
-            dot, state = "f5-step-done", "complete"
+            dot, state = "qi-step-done", "complete"
         elif i == step_idx:
-            dot, state = "f5-step-active", "active"
+            dot, state = "qi-step-active", "active"
         elif i == paused_at:
-            dot, state = "f5-step-paused", "paused"
+            dot, state = "qi-step-paused", "paused"
         else:
-            dot, state = "f5-step-pending", "pending"
+            dot, state = "qi-step-pending", "pending"
         st.markdown(
-            f'<div class="f5-timeline-step"><div class="f5-step-dot {dot}"></div><div>{label}</div></div>',
+            f'<div class="qi-timeline-step"><div class="qi-step-dot {dot}"></div><div>{label}</div></div>',
             unsafe_allow_html=True,
         )
 
