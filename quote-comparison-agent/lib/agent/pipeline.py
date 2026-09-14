@@ -103,7 +103,9 @@ def ingest(wizard: dict, log_fn: LogFn | None = None) -> ExtractResult:
         "region": wizard.get("region"),
     }
 
+    _log(log_fn, "Extractors: both PDFs are with the model now — big documents take a minute or two, hang tight.", logs)
     raw = call_llm("extract", payload)
+    _log(log_fn, "Extractors: back with structured line items — every price carries its page and snippet.", logs)
     if raw:
         return ExtractResult.model_validate(raw)
     return demo_extract(wizard)
@@ -115,6 +117,7 @@ def scan_ambiguities(extract: ExtractResult, log_fn: LogFn | None = None) -> lis
         _log(log_fn, "Detected 'Downlights included' with no quantity — flagging for confirmation.", [])
         return demo_ambiguities()
 
+    _log(log_fn, "Flagger: combing the aligned rows for anything vague — this is a full re-read, give it a moment.", [])
     raw = call_llm("ambiguity_scan", extract.model_dump())
     if not raw:
         return demo_ambiguities()

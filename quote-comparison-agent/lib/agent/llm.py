@@ -46,8 +46,8 @@ def call_llm(mode: str, payload: dict[str, Any]) -> Any:
 def _call_anthropic(user_msg: str) -> Any:
     import anthropic
 
-    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    model = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+    client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"], timeout=180.0, max_retries=1)
+    model = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-5")
     resp = client.messages.create(
         model=model,
         max_tokens=8192,
@@ -61,7 +61,7 @@ def _call_anthropic(user_msg: str) -> Any:
 def _call_openai(user_msg: str) -> Any:
     from openai import OpenAI
 
-    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"], timeout=180.0, max_retries=1)
     model = os.getenv("OPENAI_MODEL", "gpt-4o")
     resp = client.chat.completions.create(
         model=model,

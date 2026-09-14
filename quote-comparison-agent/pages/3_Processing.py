@@ -32,6 +32,8 @@ if not st.session_state.processing_complete and not st.session_state.get("ingest
 
     def on_log(msg: str) -> None:
         logs.append(msg)
+        tail = logs[-6:]
+        log_box.markdown("\n".join(f"*{m}*  " for m in tail))
 
     progress = st.progress(0, text="Starting agent…")
     with st.status("Running comparison pipeline…", expanded=True) as status:
