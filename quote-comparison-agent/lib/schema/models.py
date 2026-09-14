@@ -53,13 +53,21 @@ class ExtractResult(_MoneyTolerant):
 class AmbiguityFlag(_MoneyTolerant):
     id: str
     item_name: str
-    competitor_wording: str
-    builder_detail: str
+    competitor_wording: str = ""
+    builder_detail: str = ""
     builder_value: float | None = None
     competitor_value: float | None = None
-    reason: str
-    suggested_clarification: str
+    reason: str = ""
+    suggested_clarification: str = ""
     confidence: Literal["LOW", "MEDIUM"] = "LOW"
+
+    @field_validator("confidence", mode="before")
+    @classmethod
+    def _clamp_confidence(cls, v):
+        v = str(v or "LOW").strip().upper()
+        if v == "HIGH":
+            return "MEDIUM"  # an ambiguity is never HIGH-confidence by definition
+        return v if v in ("LOW", "MEDIUM") else "LOW"
 
 
 class AmbiguityResolution(BaseModel):
