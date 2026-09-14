@@ -38,6 +38,19 @@ PIPELINE_STEPS = [
     "Generating summary",
 ]
 
+AGENT_NARRATION = [
+    "Orchestrator: G'day — two quotes in the tray. Righto, let's get cracking.",
+    "Competitor Extractor: having a proper squiz at their PDF — every price gets a page and a verbatim snippet, no exceptions.",
+    "Builder Extractor: going line by line on ours — if it hasn't got evidence, it doesn't get a dollar.",
+    "Scout: ducking out for the competitor's design page… (left it blank? No worries, we crack on without it.)",
+    "Scout: same again for the Builder's design page — context helps, but it never invents a number.",
+    "Alignment: matching like-for-like across two builders' lingo — 'face brickwork', meet 'brick veneer'.",
+    "Flagger: 'downlights included' with no count? Yeah, nah — that one's off to a human before any total moves.",
+    "Verifier (different model, on purpose): trust nothing, re-read everything — any figure I can't confirm gets benched as Unconfirmed.",
+    "Calculator: pure Decimal, zero model maths — reconciling to the cent, mate.",
+    "Reporter: writing it up so the consultant can defend every single number at the kitchen table.",
+]
+
 
 @dataclass
 class PipelineResult:
@@ -207,16 +220,16 @@ def run_pipeline_sync(wizard: dict, log_fn: LogFn | None = None) -> PipelineResu
     def _l(m: str) -> None:
         _log(log_fn, m, logs)
 
-    _l("Starting document ingestion…")
+    _l("Orchestrator: kicking off — ingestion first, then the chain runs in order.")
     extract = ingest(wizard, _l)
     _l(f"Competitor: {extract.competitor_plan} — ${extract.competitor_total or 'TBC'}")
     _l(f"Builder: {extract.builder_plan} — ${extract.builder_total or 'TBC'}")
-    _l("Scanning for ambiguous inclusions…")
+    _l("Flagger: sweeping for ambiguous inclusions — anything vague gets pulled up, not papered over.")
     ambiguities = scan_ambiguities(extract, _l)
     if ambiguities:
-        _l(f"Found {len(ambiguities)} item(s) requiring human confirmation.")
+        _l(f"Flagger: found {len(ambiguities)} item(s) that need a human call — pipeline holds here until you sort them.")
     else:
-        _l("No ambiguities detected — proceeding to summary.")
+        _l("Flagger: all clear — nothing dodgy. Straight through to the summary.")
         summary = generate_summary(wizard, extract, [], _l)
         return PipelineResult(extract=extract, ambiguities=[], summary=summary, logs=logs)
 

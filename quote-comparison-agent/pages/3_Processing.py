@@ -5,7 +5,7 @@ import streamlit as st
 from components.brand import animated_vs_title, inject_theme, session_footer
 from components.session import ensure_session, init_session_state
 from lib.agent.llm import get_provider
-from lib.agent.pipeline import PIPELINE_STEPS, run_pipeline
+from lib.agent.pipeline import AGENT_NARRATION, PIPELINE_STEPS, run_pipeline
 
 init_session_state()
 inject_theme()
@@ -36,7 +36,8 @@ if not st.session_state.processing_complete and not st.session_state.get("ingest
     progress = st.progress(0, text="Starting agent…")
     with st.status("Running comparison pipeline…", expanded=True) as status:
         for i, step in enumerate(PIPELINE_STEPS[:7]):
-            st.write(f"▸ {step}")
+            st.write(f"▸ **{step}**")
+            st.caption(AGENT_NARRATION[i])
             progress.progress((i + 1) / len(PIPELINE_STEPS), text=step)
             time.sleep(0.35 if get_provider() == "demo" else 0.1)
 
