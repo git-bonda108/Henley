@@ -107,7 +107,13 @@ def ingest(wizard: dict, log_fn: LogFn | None = None) -> ExtractResult:
     raw = call_llm("extract", payload)
     _log(log_fn, "Extractors: back with structured line items — every price carries its page and snippet.", logs)
     if raw:
-        return ExtractResult.model_validate(raw)
+        result = ExtractResult.model_validate(raw)
+        if not result.competitor_items and not result.builder_items:
+            keys = sorted(raw.keys()) if isinstance(raw, dict) else type(raw).__name__
+            raise ValueError(
+                f"Extraction returned no line items — model output keys {keys} did not match the expected schema."
+            )
+        return result
     return demo_extract(wizard)
 
 
@@ -143,10 +149,14 @@ def generate_summary(
         _log(log_fn, "Composing internal summary from resolved ambiguities.", [])
         return demo_summary(wizard, resolved)
 
+    wizard_safe = {
+        k: v for k, v in wizard.items()
+        if isinstance(v, (str, int, float, bool, list, dict)) or v is None
+    }
     raw = call_llm(
         "summary",
         {
-            "wizard": wizard,
+            "wizard": wizard_safe,
             "extract": extract.model_dump(),
             "resolved_ambiguities": resolved,
         },
