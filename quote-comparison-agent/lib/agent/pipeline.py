@@ -122,6 +122,8 @@ def scan_ambiguities(extract: ExtractResult, log_fn: LogFn | None = None) -> lis
     flags = []
     items = raw if isinstance(raw, list) else raw.get("flags", [])
     for item in items:
+        if not isinstance(item, dict):
+            continue
         item.setdefault("id", str(uuid.uuid4()))
         flags.append(AmbiguityFlag.model_validate(item))
     return flags

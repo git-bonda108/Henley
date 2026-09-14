@@ -41,7 +41,15 @@ if not st.session_state.processing_complete and not st.session_state.get("ingest
             progress.progress((i + 1) / len(PIPELINE_STEPS), text=step)
             time.sleep(0.35 if get_provider() == "demo" else 0.1)
 
-        result = run_pipeline(w, on_log)
+        try:
+            result = run_pipeline(w, on_log)
+        except Exception:
+            import traceback as _tb
+            status.update(label="Pipeline failed", state="error")
+            st.error("The pipeline hit an error. Full detail below — nothing is hidden.")
+            with st.expander("Error detail", expanded=True):
+                st.code(_tb.format_exc())
+            st.stop()
         st.session_state.ingest_result = result.extract.model_dump()
         st.session_state.ambiguities = [a.model_dump() for a in result.ambiguities]
         st.session_state.pipeline_logs = result.logs + logs

@@ -2,10 +2,35 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
-class LineItem(BaseModel):
+def _money(v):
+    """Coerce model-emitted money values: '$1,234.56', '1,234', 'Included', '' -> float|None."""
+    if v is None or isinstance(v, (int, float)):
+        return v
+    if isinstance(v, str):
+        t = v.replace("$", "").replace(",", "").replace("AUD", "").strip()
+        if t in ("", "Included", "included", "TBC", "N/A", "-"):
+            return None
+        try:
+            return float(t)
+        except ValueError:
+            return None
+    return None
+
+
+class _MoneyTolerant(BaseModel):
+    @field_validator("*", mode="before")
+    @classmethod
+    def _coerce_money_fields(cls, v, info):
+        f = cls.model_fields.get(info.field_name)
+        if f is not None and str(f.annotation) in ("float | None", "typing.Optional[float]"):
+            return _money(v)
+        return v
+
+
+class LineItem(_MoneyTolerant):
     description: str
     quantity: str | None = None
     unit_price: float | None = None
@@ -13,7 +38,7 @@ class LineItem(BaseModel):
     source_line: str = ""
 
 
-class ExtractResult(BaseModel):
+class ExtractResult(_MoneyTolerant):
     competitor_brand: str = ""
     competitor_plan: str = ""
     competitor_total: float | None = None
@@ -25,7 +50,7 @@ class ExtractResult(BaseModel):
     builder_design: dict = Field(default_factory=dict)
 
 
-class AmbiguityFlag(BaseModel):
+class AmbiguityFlag(_MoneyTolerant):
     id: str
     item_name: str
     competitor_wording: str
@@ -51,20 +76,20 @@ class InclusionRow(BaseModel):
     advantage: Literal["builder", "competitor", "none"] = "none"
 
 
-class ValuePoint(BaseModel):
+class ValuePoint(_MoneyTolerant):
     point: str
     value: float | None = None
     source_ref: str = ""
 
 
-class ReconciliationRow(BaseModel):
+class ReconciliationRow(_MoneyTolerant):
     description: str
     competitor_add: float | None = None
     builder_add: float | None = None
     source_ref: str = ""
 
 
-class QuoteReconciliation(BaseModel):
+class QuoteReconciliation(_MoneyTolerant):
     rows: list[ReconciliationRow] = Field(default_factory=list)
     subtotal_competitor: float | None = None
     subtotal_builder: float | None = None
@@ -95,7 +120,7 @@ class SummaryConditionals(BaseModel):
     site_costs_note: str | None = None
 
 
-class ComparisonSummary(BaseModel):
+class ComparisonSummary(_MoneyTolerant):
     header: SummaryHeader
     headline_snapshot: str = ""
     design_differences: list[dict] = Field(default_factory=list)
