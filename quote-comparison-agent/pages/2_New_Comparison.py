@@ -47,7 +47,10 @@ with st.expander("2 · Builder quote", expanded=bool(w.get("competitor_pdf"))):
 
 # ── Section 3: Home design URLs ────────────────────────────────────────────────
 with st.expander("3 · Home design URLs", expanded=bool(w.get("builder_pdf"))):
-    urls_ok = bool(w.get("competitor_url", "").startswith("http")) and bool(w.get("builder_url", "").startswith("http"))
+    def _url_ok(u):
+        u = (u or "").strip()
+        return (not u) or u.startswith("http")
+    urls_ok = _url_ok(w.get("competitor_url")) and _url_ok(w.get("builder_url"))
     status = "READY" if urls_ok else "PENDING"
     st.markdown(f'<span class="qi-status-pill qi-status-{"ready" if status=="READY" else "pending"}">{status}</span>', unsafe_allow_html=True)
 
@@ -60,9 +63,9 @@ with st.expander("3 · Home design URLs", expanded=bool(w.get("builder_pdf"))):
     with c2:
         w["builder_url"] = st.text_input(
             "Builder home design URL",
-            w.get("builder_url") or "https://www.builder.com.au/home-designs/",
+            w.get("builder_url") or "",
         )
-    st.caption("We re-fetch live on every run — no caching (FR-02.3).")
+    st.caption("Optional — leave blank to compare quotes without design-page context. Fetched live when provided (FR-02.3).")
 
 # ── Section 4: Run context ─────────────────────────────────────────────────────
 with st.expander("4 · Run context", expanded=urls_ok):
@@ -83,8 +86,8 @@ with st.expander("4 · Run context", expanded=urls_ok):
 st.session_state.wizard = w
 
 all_ready = all([
-    w.get("competitor_url", "").startswith("http"),
-    w.get("builder_url", "").startswith("http"),
+    _url_ok(w.get("competitor_url")),
+    _url_ok(w.get("builder_url")),
     w.get("sales_rep", "").strip(),
 ]) and (
     (w.get("competitor_pdf") and w.get("builder_pdf"))

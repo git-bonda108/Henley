@@ -66,10 +66,20 @@ def ingest(wizard: dict, log_fn: LogFn | None = None) -> ExtractResult:
     _log(log_fn, f"Read {comp_pdf['page_count']} pages from competitor PDF.", logs)
     _log(log_fn, f"Read {hen_pdf['page_count']} pages from Builder PDF.", logs)
 
-    comp_design = fetch_url(wizard["competitor_url"])
-    hen_design = fetch_url(wizard["builder_url"])
-    _log(log_fn, f"Fetched competitor design: {comp_design.get('title', wizard['competitor_url'])}", logs)
-    _log(log_fn, f"Fetched Builder design: {hen_design.get('title', wizard['builder_url'])}", logs)
+    def _safe_fetch(url, label):
+        if not (url or "").strip():
+            _log(log_fn, f"{label} design URL not provided — continuing without design context.", logs)
+            return {}
+        try:
+            page = fetch_url(url)
+            _log(log_fn, f"Fetched {label} design: {page.get('title', url)}", logs)
+            return page
+        except Exception as exc:  # graceful degradation: design context is optional
+            _log(log_fn, f"{label} design fetch failed ({exc.__class__.__name__}) — continuing without design context.", logs)
+            return {}
+
+    comp_design = _safe_fetch(wizard.get("competitor_url"), "competitor")
+    hen_design = _safe_fetch(wizard.get("builder_url"), "Builder")
 
     payload = {
         "competitor_quote": comp_pdf["text"][:40_000],
